@@ -47,7 +47,6 @@ def compute_standings(teams, matches_df):
         if hg is None or ag is None:
             continue
         if home not in stats or away not in stats:
-            # skip matches with unknown teams
             continue
         stats[home]['PG'] += 1
         stats[away]['PG'] += 1
@@ -75,6 +74,12 @@ def compute_standings(teams, matches_df):
         dr = s['GF'] - s['GS']
         out.append({'Squadra': t, 'Punti': s['Punti'], 'PG': s['PG'], 'V': s['V'], 'N': s['N'], 'P': s['P'], 'GF': s['GF'], 'GS': s['GS'], 'DR': dr})
     out_df = pd.DataFrame(out)
+
+    # Verifica che tutte le colonne per ordinamento esistano
+    for col in ['Punti', 'DR', 'GF']:
+        if col not in out_df.columns:
+            out_df[col] = 0
+
     out_df = out_df.sort_values(by=['Punti','DR','GF'], ascending=[False,False,False]).reset_index(drop=True)
     return out_df
 
