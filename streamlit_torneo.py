@@ -35,7 +35,12 @@ def parse_int(v):
 def compute_standings(teams, matches_df):
     df = pd.DataFrame({'Squadra': teams}).dropna()
     df = df[df['Squadra'] != ''].reset_index(drop=True)
+    if df.empty:
+        # Nessuna squadra valida, ritorna tabella vuota con colonne corrette
+        return pd.DataFrame(columns=['Squadra','Punti','PG','V','N','P','GF','GS','DR'])
+
     stats = {t: {'Punti':0, 'PG':0, 'V':0, 'N':0, 'P':0, 'GF':0, 'GS':0} for t in df['Squadra']}
+
     for _, row in matches_df.iterrows():
         home = row.get('Squadra Casa')
         away = row.get('Squadra Trasferta')
@@ -66,12 +71,21 @@ def compute_standings(teams, matches_df):
             stats[away]['N'] += 1
             stats[home]['Punti'] += 1
             stats[away]['Punti'] += 1
+
     out = []
     for t in df['Squadra']:
         s = stats[t]
         dr = s['GF'] - s['GS']
         out.append({'Squadra': t, 'Punti': s['Punti'], 'PG': s['PG'], 'V': s['V'], 'N': s['N'], 'P': s['P'], 'GF': s['GF'], 'GS': s['GS'], 'DR': dr})
     out_df = pd.DataFrame(out)
+
+    # Controllo colonne presenti
+    expected_cols = ['Punti','DR','GF']
+    missing_cols = [c for c in expected_cols if c not in out_df.columns]
+    if missing_cols:
+        # Se mancano colonne, ritorna tabella senza ordinamento
+        return out_df.reset_index(drop=True)
+
     out_df = out_df.sort_values(by=['Punti','DR','GF'], ascending=[False,False,False]).reset_index(drop=True)
     return out_df
 
