@@ -33,13 +33,11 @@ def parse_int(v):
         return None
 
 def compute_standings(teams, matches_df):
-    df = pd.DataFrame({'Squadra': teams}).dropna()
-    df = df[df['Squadra'] != ''].reset_index(drop=True)
-    if df.empty:
-        # Nessuna squadra valida, ritorna tabella vuota con colonne corrette
-        return pd.DataFrame(columns=['Squadra','Punti','PG','V','N','P','GF','GS','DR'])
+    # Rimuovi squadre vuote o None
+    teams = [t for t in teams if t and t.strip() != '']
 
-    stats = {t: {'Punti':0, 'PG':0, 'V':0, 'N':0, 'P':0, 'GF':0, 'GS':0} for t in df['Squadra']}
+    # Inizializza le statistiche a zero anche per squadre senza partite
+    stats = {t: {'Punti':0, 'PG':0, 'V':0, 'N':0, 'P':0, 'GF':0, 'GS':0} for t in teams}
 
     for _, row in matches_df.iterrows():
         home = row.get('Squadra Casa')
@@ -51,6 +49,7 @@ def compute_standings(teams, matches_df):
         if hg is None or ag is None:
             continue
         if home not in stats or away not in stats:
+            # skip matches con squadre sconosciute
             continue
         stats[home]['PG'] += 1
         stats[away]['PG'] += 1
@@ -72,22 +71,18 @@ def compute_standings(teams, matches_df):
             stats[home]['Punti'] += 1
             stats[away]['Punti'] += 1
 
+    # Ora crea la tabella completa, anche per squadre senza partite
     out = []
-    for t in df['Squadra']:
+    for t in teams:
         s = stats[t]
         dr = s['GF'] - s['GS']
         out.append({'Squadra': t, 'Punti': s['Punti'], 'PG': s['PG'], 'V': s['V'], 'N': s['N'], 'P': s['P'], 'GF': s['GF'], 'GS': s['GS'], 'DR': dr})
+
     out_df = pd.DataFrame(out)
-
-    # Controllo colonne presenti
-    expected_cols = ['Punti','DR','GF']
-    missing_cols = [c for c in expected_cols if c not in out_df.columns]
-    if missing_cols:
-        # Se mancano colonne, ritorna tabella senza ordinamento
-        return out_df.reset_index(drop=True)
-
+    # Ordina come prima
     out_df = out_df.sort_values(by=['Punti','DR','GF'], ascending=[False,False,False]).reset_index(drop=True)
     return out_df
+
 
 def parse_marcatori(matches_df):
     scorers = {}
