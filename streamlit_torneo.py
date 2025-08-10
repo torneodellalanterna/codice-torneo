@@ -165,10 +165,9 @@ with st.sidebar:
         buf = st.session_state['calendar'].to_csv(index=False)
         st.download_button('Scarica calendario CSV', buf, file_name='calendario.csv')
 
-   st.markdown("""Aiuto: i marcatori devono essere inseriti nel formato:
+    st.markdown("""Aiuto: i marcatori devono essere inseriti nel formato:
 Nome Cognome (Squadra); Altro Giocatore (Altro Team)
 separati da punto e virgola. Ogni voce conta come 1 gol.""")
-
 
 # --- Main: Tabs -----------------------------------------------------------
 
@@ -177,7 +176,7 @@ tabs = st.tabs(['Calendario e risultati', 'Classifica', 'Marcatori', 'Eliminazio
 # --- Calendario e risultati -----------------------------------------------
 with tabs[0]:
     st.header('Calendario e inserimento risultati')
-    st.markdown('Aggiungi le partite nell'ordine che preferisci. Per aggiornare classifica e marcatori, premi "Salva calendario".')
+    st.markdown("Aggiungi le partite nell'ordine che preferisci. Per aggiornare classifica e marcatori, premi \"Salva calendario\".")
     cal = st.session_state['calendar']
     # ensure columns
     required_cols = ['Data', 'Squadra Casa', 'Gol Casa', 'Squadra Trasferta', 'Gol Trasferta', 'Marcatori']
@@ -244,7 +243,7 @@ st.markdown('---')
 col1, col2 = st.columns([2,1])
 with col1:
     st.caption('Suggerimenti:')
-    st.markdown('- Per mobilità: apri l'app su smartphone e modifica il calendario con la data e i risultati.\n- Per salvare uno storico, usa il pulsante "Esporta JSON" dalla sidebar oppure scarica il CSV del calendario.')
+    st.markdown('- Per mobilità: apri l\'app su smartphone e modifica il calendario con la data e i risultati.\n- Per salvare uno storico, usa il pulsante "Esporta JSON" dalla sidebar oppure scarica il CSV del calendario.')
 with col2:
     if st.session_state['last_save']:
         st.caption(f"Ultimo salvataggio: {st.session_state['last_save']}")
