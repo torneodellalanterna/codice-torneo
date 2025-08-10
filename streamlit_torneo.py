@@ -165,9 +165,10 @@ with st.sidebar:
         buf = st.session_state['calendar'].to_csv(index=False)
         st.download_button('Scarica calendario CSV', buf, file_name='calendario.csv')
 
-    st.markdown('Aiuto: i marcatori devono essere inseriti nel formato:\n
-    Nome Cognome (Squadra); Altro Giocatore (Altro Team)\n
-    separati da punto e virgola. Ogni voce conta come 1 gol.')
+   st.markdown("""Aiuto: i marcatori devono essere inseriti nel formato:
+Nome Cognome (Squadra); Altro Giocatore (Altro Team)
+separati da punto e virgola. Ogni voce conta come 1 gol.""")
+
 
 # --- Main: Tabs -----------------------------------------------------------
 
